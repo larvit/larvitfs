@@ -3,6 +3,6 @@
   "description": "Testing module for local use only",
   "version": "0.0.1",
   "dependencies": {
-    "sub_test_module": "./sub_test_module"
+    "sub_test_module": "file:../sub_test_module"
   }
 }

@@ -14,7 +14,7 @@
     "eslint": "^2.6.0",
     "mocha": "^2.4.5",
     "pre-git": "^3.8.1",
-    "test-module": "./test_module"
+    "test_module": "file:test_module"
   },
   "pre-commit": [
     "npm test",
