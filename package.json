@@ -1,0 +1,57 @@
+{
+  "author": {
+    "name": "Mikael 'Lilleman' Göransson",
+    "email": "lilleman@larvit.se",
+    "url": "http://github.com/larvit/larvitfs"
+  },
+  "private": false,
+  "contributors": [],
+  "dependencies": {
+    "winston": "^2.2.0"
+  },
+  "description": "Cascading filesystem for node.js",
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "pre-git": "^3.8.1",
+    "test-module": "./test_module"
+  },
+  "pre-commit": [
+    "npm test",
+    "eslint ./"
+  ],
+  "keywords": [
+    "router",
+    "regexp",
+    "async"
+  ],
+  "main": "index.js",
+  "name": "larvitfs",
+  "repository": {
+    "url": "https://github.com/larvit/larvitfs",
+    "type": "git"
+  },
+  "version": "1.0.0",
+  "bugs": {
+    "url": "https://github.com/larvit/larvitfs/issues"
+  },
+  "homepage": "https://github.com/larvit/larvitfs",
+  "scripts": {
+    "test": "mocha"
+  },
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "lilleman",
+      "email": "lilleman@larvit.se"
+    }
+  ],
+  "config": {
+    "pre-git": {
+      "commit-msg": [],
+      "pre-commit": [],
+      "pre-push": [],
+      "post-commit": [],
+      "post-merge": []
+    }
+  }
+}
