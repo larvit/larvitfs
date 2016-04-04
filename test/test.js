@@ -22,7 +22,7 @@ log.add(log.transports.Console, {
 lfs = require('../index.js');
 
 describe('getPathSync()', function() {
-	it('Should fetch dummy.txt from local public', function(done) {
+	it('Fetch dummy.txt from local public', function(done) {
 		const resolvedPath = lfs.getPathSync('public/dummy.txt');
 
 		fs.readFile(resolvedPath, function(err, data) {
@@ -33,7 +33,7 @@ describe('getPathSync()', function() {
 		});
 	});
 
-	it('Should fetch dummy.txt from absolute path', function(done) {
+	it('Fetch dummy.txt from absolute path', function(done) {
 		const absPath      = process.cwd() + '/node_modules/test_module/public/dummy.txt',
 		      resolvedPath = lfs.getPathSync(absPath);
 
@@ -45,7 +45,7 @@ describe('getPathSync()', function() {
 		});
 	});
 
-	it('Should fetch foo.txt from a test module but we pretend its local', function(done) {
+	it('Fetch foo.txt from a test module but we pretend its local', function(done) {
 		const resolvedPath = lfs.getPathSync('public/foo.txt');
 
 		fs.readFile(resolvedPath, function(err, data) {
@@ -56,7 +56,7 @@ describe('getPathSync()', function() {
 		});
 	});
 
-	it('Should fetch muppet.txt from a dependency to a module', function(done) {
+	it('Fetch muppet.txt from a dependency to a module', function(done) {
 		const resolvedPath = lfs.getPathSync('public/muppet.txt');
 
 		fs.readFile(resolvedPath, function(err, data) {
@@ -67,11 +67,22 @@ describe('getPathSync()', function() {
 		});
 	});
 
-	it('Should fail to fetch nonexisting.txt', function(done) {
+	it('Fail to fetch nonexisting.txt', function(done) {
 		const resolvedPath = lfs.getPathSync('nonexisting.txt');
 
 		assert.deepEqual(resolvedPath, false);
 
 		done();
+	});
+
+	it('Fetch deep file', function(done) {
+		const resolvedPath = lfs.getPathSync('public/baz/mek.txt');
+
+		fs.readFile(resolvedPath, function(err, data) {
+			assert( ! err, 'Err should be negative');
+			assert.deepEqual(data.toString(), 'hest');
+
+			done();
+		});
 	});
 });
