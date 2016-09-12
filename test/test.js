@@ -1,8 +1,8 @@
 'use strict';
 
-const assert = require('assert'),
-      log    = require('winston'),
-      fs     = require('fs');
+const	assert	= require('assert'),
+	log	= require('winston'),
+	fs	= require('fs');
 
 let lfs;
 
@@ -11,12 +11,12 @@ process.chdir(__dirname + '/..');
 
 // Set up winston
 log.remove(log.transports.Console);
-log.add(log.transports.Console, {
+/** /log.add(log.transports.Console, {
 	'level':     'info',
 	'colorize':  true,
 	'timestamp': true,
 	'json':      false
-});
+});/**/
 
 // Do this after winston is set up so we get all logging messages correctly
 lfs = require('../index.js');
@@ -34,8 +34,8 @@ describe('getPathSync()', function() {
 	});
 
 	it('Fetch dummy.txt from absolute path', function(done) {
-		const absPath      = process.cwd() + '/node_modules/test_module/public/dummy.txt',
-		      resolvedPath = lfs.getPathSync(absPath);
+		const	absPath	= process.cwd() + '/node_modules/test_module/public/dummy.txt',
+			resolvedPath	= lfs.getPathSync(absPath);
 
 		fs.readFile(resolvedPath, function(err, data) {
 			assert( ! err, 'Err should be negative');
