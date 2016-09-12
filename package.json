@@ -11,9 +11,9 @@
   },
   "description": "Cascading filesystem for node.js",
   "devDependencies": {
-    "eslint": "^2.6.0",
-    "mocha": "^2.4.5",
-    "pre-git": "^3.8.1",
+    "eslint": "^3.5.0",
+    "mocha": "^3.0.2",
+    "pre-git": "^3.10.0",
     "test_module": "file:test_module"
   },
   "pre-commit": [
