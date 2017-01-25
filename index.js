@@ -70,7 +70,7 @@ exports.getPathSync = function getPathSync(pathToResolve) {
 	}
 
 	if (pathToResolve[0] === '/') {
-		log.debug('larvitfs: getPathSync() - pathToResolve, "' + pathToResolve + '", starts with "/", only check aboslute path');
+		log.debug('larvitfs: getPathSync() - pathToResolve, "' + pathToResolve + '", starts with "/", only check absolute path');
 
 		try {
 			let stat = fs.statSync(pathToResolve);
