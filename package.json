@@ -13,13 +13,8 @@
   "devDependencies": {
     "eslint": "^3.5.0",
     "mocha": "^3.0.2",
-    "pre-git": "^3.10.0",
     "test_module": "file:test_module"
   },
-  "pre-commit": [
-    "npm test",
-    "eslint ./"
-  ],
   "keywords": [
     "router",
     "regexp",
@@ -45,14 +40,5 @@
       "name": "lilleman",
       "email": "lilleman@larvit.se"
     }
-  ],
-  "config": {
-    "pre-git": {
-      "commit-msg": [],
-      "pre-commit": [],
-      "pre-push": [],
-      "post-commit": [],
-      "post-merge": []
-    }
-  }
+  ]
 }

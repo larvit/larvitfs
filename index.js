@@ -1,50 +1,55 @@
 'use strict';
 
-const package_json = require('./package.json'),
-      path         = require('path'),
-      log          = require('winston'),
-      fs           = require('fs');
+const	package_json	= require('./package.json'),
+	topLogPrefix	= 'larvitfs: index.js: ',
+	path	= require('path'),
+	log	= require('winston'),
+	fs	= require('fs');
 
-exports.cache = new Map();
-exports.paths = [process.cwd()];
+exports.cache	= new Map();
+exports.paths	= [process.cwd()];
 
 // Load paths to local cache
 function loadPaths() {
-	log.verbose('larvitfs: loadPaths() - Loading paths cache relative to ' + process.cwd());
+	const	logPrefix	= topLogPrefix + 'loadPaths() - ';
+
+	log.verbose(logPrefix + 'Loading paths cache relative to ' + process.cwd());
 
 	// First go through the dependencies in the package file
 	for (let depPath of Object.keys(package_json.dependencies)) {
-		const modPath = path.normalize(process.cwd() + '/node_modules/' + depPath),
-		      stats   = fs.statSync(modPath);
+		const	modPath	= path.normalize(process.cwd() + '/node_modules/' + depPath),
+			stats	= fs.statSync(modPath);
 
 		if ( ! stats || ! stats.isDirectory()) {
-			log.info('larvitfs: loadPaths() - Module "' + depPath + '" not found at ' + modPath);
+			log.info(logPrefix + 'Module "' + depPath + '" not found at ' + modPath);
 		} else {
-			log.debug('larvitfs: loadPaths() - Adding ' + depPath + ' to paths with full path ' + modPath);
+			log.debug(logPrefix + 'Adding ' + depPath + ' to paths with full path ' + modPath);
 			exports.paths.push(modPath);
 		}
 	}
 
 	// Add all other paths, recursively
 	function loadPathsRec(thisPath) {
-		let thisPaths;
+		const	subLogPrefix	= logPrefix + 'loadPathsRec() - ';
+
+		let	thisPaths;
 
 		if (exports.paths.indexOf(thisPath) === - 1) {
-			log.debug('larvitfs: loadPaths() - loadPathsRec() - Adding ' + path.basename(thisPath) + ' to paths with full path ' + thisPath);
+			log.debug(subLogPrefix + 'Adding ' + path.basename(thisPath) + ' to paths with full path ' + thisPath);
 			exports.paths.push(thisPath);
 		}
 
-		thisPaths = fs.readdirSync(thisPath + '/node_modules');
+		thisPaths	= fs.readdirSync(thisPath + '/node_modules');
 
 		for (let i = 0; thisPaths[i] !==  undefined; i ++) {
 			try {
-				const subStat = fs.statSync(thisPath + '/node_modules/' + thisPaths[i]);
+				const	subStat	= fs.statSync(thisPath + '/node_modules/' + thisPaths[i]);
 
 				if (subStat.isDirectory()) {
 					loadPathsRec(thisPath + '/node_modules/' + thisPaths[i]);
 				}
-			} catch(err) {
-				log.silly('larvitfs: loadPaths() - loadPathsRec() - Could not read "' + thisPaths[i] + '": ' + err.message);
+			} catch (err) {
+				log.silly(subLogPrefix + 'Could not read "' + thisPaths[i] + '": ' + err.message);
 			}
 		}
 	}
@@ -52,15 +57,17 @@ function loadPaths() {
 	// Start in the current directory
 	try {
 		loadPathsRec(process.cwd());
-	} catch(err) {
-		log.info('larvitfs: loadPaths() - Could not find node_modules folder in "' + process.cwd() + '". If you have modules installed, make sure process.cwd() is set correctly before loading larvitfs');
+	} catch (err) {
+		log.info(logPrefix + 'Could not find node_modules folder in "' + process.cwd() + '". If you have modules installed, make sure process.cwd() is set correctly before loading larvitfs');
 	}
 }
 loadPaths();
 
-exports.getPathSync = function getPathSync(pathToResolve) {
+function getPathSync(pathToResolve) {
+	const	logPrefix = topLogPrefix + 'getPathSync() - pathToResolve: "' + pathToResolve + '" - ';
+
 	if (exports.cache.get(pathToResolve) !== undefined) {
-		log.silly('larvitfs: getPathSync() - Found ' + pathToResolve + ' in cache');
+		log.silly(logPrefix + 'Found in cache');
 		return exports.cache.get(pathToResolve);
 	}
 
@@ -70,41 +77,41 @@ exports.getPathSync = function getPathSync(pathToResolve) {
 	}
 
 	if (pathToResolve[0] === '/') {
-		log.debug('larvitfs: getPathSync() - pathToResolve, "' + pathToResolve + '", starts with "/", only check absolute path');
+		log.debug(logPrefix + 'starts with "/", only check absolute path');
 
 		try {
-			let stat = fs.statSync(pathToResolve);
+			let	stat	= fs.statSync(pathToResolve);
 
 			if (stat.isFile()) {
 				exports.cache.set(pathToResolve, pathToResolve);
 			} else {
 				exports.cache.set(pathToResolve, false);
 			}
-		} catch(err) {
-			log.verbose('larvitfs: getPathSync() - fs.statSync() threw err: ' + err.message);
+		} catch (err) {
+			log.verbose(logPrefix + 'fs.statSync() threw err: ' + err.message);
 			exports.cache.set(pathToResolve, false);
 		}
 
 		return exports.cache.get(pathToResolve);
 	} else {
-		log.debug('larvitfs: getPathSync() - pathToResolve, "' + pathToResolve + '", is relative, look in all the paths');
+		log.debug(logPrefix + 'is relative, look in all the paths');
 
 		for (let i = 0; exports.paths[i] !== undefined; i ++) {
-			let testPath = path.join(exports.paths[i], pathToResolve);
+			let	testPath	= path.join(exports.paths[i], pathToResolve);
 
-			log.silly('larvitfs: getPathSync() - Checking for ' + testPath);
+			log.silly(logPrefix + 'Checking for ' + testPath);
 
 			// Lookup if this file exists
 			try {
-				let stat = fs.statSync(testPath);
+				let	stat	= fs.statSync(testPath);
 
 				if (stat.isFile()) {
-					log.debug('larvitfs: getPathSync() - Found "' + testPath + '" - loading to cache');
+					log.debug(logPrefix + 'Found "' + testPath + '" - loading to cache');
 					exports.cache.set(pathToResolve, testPath);
 					return testPath;
 				}
-			} catch(e) {
-				log.silly('larvitfs: getPathSync() - ' + testPath + ' does not exist');
+			} catch (err) {
+				log.silly(logPrefix + testPath + ' does not exist, err: ' + err.message);
 			}
 		}
 
@@ -114,3 +121,5 @@ exports.getPathSync = function getPathSync(pathToResolve) {
 		return false;
 	}
 };
+
+exports.getPathSync	= getPathSync;
