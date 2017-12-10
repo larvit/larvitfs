@@ -1,13 +1,9 @@
 'use strict';
 
-const	assert	= require('assert'),
+const	test	= require('tape'),
+	Lfs	= require(__dirname + '/../index.js'),
 	log	= require('winston'),
 	fs	= require('fs');
-
-let lfs;
-
-// Make sure this is ran from the correct folder
-process.chdir(__dirname + '/..');
 
 // Set up winston
 log.remove(log.transports.Console);
@@ -18,71 +14,71 @@ log.remove(log.transports.Console);
 	'json':      false
 });/**/
 
-// Do this after winston is set up so we get all logging messages correctly
-lfs = require('../index.js');
+test('Fetch dummy.txt from local public', function (t) {
+	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
+		resolvedPath	= lfs.getPathSync('public/dummy.txt');
 
-describe('getPathSync()', function() {
-	it('Fetch dummy.txt from local public', function(done) {
-		const resolvedPath = lfs.getPathSync('public/dummy.txt');
+	fs.readFile(resolvedPath, function (err, data) {
+		if (err) throw err;
 
-		fs.readFile(resolvedPath, function(err, data) {
-			assert( ! err, 'Err should be negative');
-			assert.deepEqual(data.toString(), 'Horses does not exist');
-
-			done();
-		});
+		t.equal(data.toString(),	'Horses does not exist');
+		t.end();
 	});
+});
 
-	it('Fetch dummy.txt from absolute path', function(done) {
-		const	absPath	= process.cwd() + '/node_modules/test_module/public/dummy.txt',
-			resolvedPath	= lfs.getPathSync(absPath);
+test('Fetch dummy.txt from absolute path', function (t) {
+	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
+		absPath	= __dirname + '/../node_modules/test_module/public/dummy.txt',
+		resolvedPath	= lfs.getPathSync(absPath);
 
-		fs.readFile(resolvedPath, function(err, data) {
-			assert( ! err, 'Err should be negative');
-			assert.deepEqual(data.toString(), 'nope');
+	fs.readFile(resolvedPath, function (err, data) {
+		if (err) throw err;
 
-			done();
-		});
+		t.equal(data.toString(),	'nope');
+		t.end();
 	});
+});
 
-	it('Fetch foo.txt from a test module but we pretend its local', function(done) {
-		const resolvedPath = lfs.getPathSync('public/foo.txt');
+test('Fetch foo.txt from a test module but we pretend its local', function(t) {
+	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
+		resolvedPath	= lfs.getPathSync('public/foo.txt');
 
-		fs.readFile(resolvedPath, function(err, data) {
-			assert( ! err, 'Err should be negative');
-			assert.deepEqual(data.toString(), 'bar');
+	fs.readFile(resolvedPath, function (err, data) {
+		if (err) throw err;
 
-			done();
-		});
+		t.equal(data.toString(),	'bar');
+		t.end();
 	});
+});
 
-	it('Fetch muppet.txt from a dependency to a module', function(done) {
-		const resolvedPath = lfs.getPathSync('public/muppet.txt');
+test('Fetch muppet.txt from a dependency to a module', function(t) {
+	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
+		resolvedPath	= lfs.getPathSync('public/muppet.txt');
 
-		fs.readFile(resolvedPath, function(err, data) {
-			assert( ! err, 'Err should be negative');
-			assert.deepEqual(data.toString(), 'oh, such muppet');
+	fs.readFile(resolvedPath, function(err, data) {
+		if (err) throw err;
 
-			done();
-		});
+		t.equal(data.toString(),	'oh, such muppet');
+		t.end();
 	});
+});
 
-	it('Fail to fetch nonexisting.txt', function(done) {
-		const resolvedPath = lfs.getPathSync('nonexisting.txt');
+test('Fail to fetch nonexisting.txt', function(t) {
+	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
+		resolvedPath	= lfs.getPathSync('nonexisting.txt');
 
-		assert.deepEqual(resolvedPath, false);
+	t.equal(resolvedPath,	false);
+	t.end();
+});
 
-		done();
-	});
+test('Fetch deep file', function(t) {
+	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
+		resolvedPath	= lfs.getPathSync('public/baz/mek.txt');
 
-	it('Fetch deep file', function(done) {
-		const resolvedPath = lfs.getPathSync('public/baz/mek.txt');
+	fs.readFile(resolvedPath, function(err, data) {
+		if (err) throw err;
 
-		fs.readFile(resolvedPath, function(err, data) {
-			assert( ! err, 'Err should be negative');
-			assert.deepEqual(data.toString(), 'hest');
-
-			done();
-		});
+		t.equal(data.toString(),	'hest');
+		t.end();
 	});
 });

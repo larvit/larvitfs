@@ -1,44 +1,42 @@
 {
+  "name": "larvitfs",
+  "version": "2.0.0",
+  "description": "Cascading filesystem for node.js",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "./node_modules/tape/bin/tape ./test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/larvit/larvitfs.git"
+  },
+  "keywords": [
+    "fs",
+    "virtualfs",
+    "cascladingfs"
+  ],
   "author": {
     "name": "Mikael 'Lilleman' Göransson",
     "email": "lilleman@larvit.se",
-    "url": "http://github.com/larvit/larvitfs"
+    "url": "http://github.com/larvit/larvitbase"
   },
-  "private": false,
-  "contributors": [],
-  "dependencies": {
-    "winston": "^2.2.0"
-  },
-  "description": "Cascading filesystem for node.js",
-  "devDependencies": {
-    "eslint": "^3.5.0",
-    "mocha": "^3.0.2",
-    "test_module": "file:test_module"
-  },
-  "keywords": [
-    "router",
-    "regexp",
-    "async"
-  ],
-  "main": "index.js",
-  "name": "larvitfs",
-  "repository": {
-    "url": "https://github.com/larvit/larvitfs",
-    "type": "git"
-  },
-  "version": "1.0.1",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/larvit/larvitfs/issues"
   },
-  "homepage": "https://github.com/larvit/larvitfs",
-  "scripts": {
-    "test": "mocha"
+  "homepage": "https://github.com/larvit/larvitfs#readme",
+  "dependencies": {
+    "winston": "^2.4.0"
   },
-  "license": "MIT",
-  "maintainers": [
-    {
-      "name": "lilleman",
-      "email": "lilleman@larvit.se"
-    }
-  ]
+  "devDependencies": {
+    "coveralls": "^3.0.0",
+    "eslint": "^4.13.0",
+    "istanbul": "^0.4.5",
+    "tape": "^4.8.0",
+    "tape-eslint": "^1.2.1",
+    "test_module": "file:test_module"
+  }
 }

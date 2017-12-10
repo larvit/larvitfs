@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/larvit/larvitfs.svg?branch=master)](https://travis-ci.org/larvit/larvitfs) [![Dependencies](https://david-dm.org/larvit/larvitfs.svg)](https://david-dm.org/larvit/larvitfs.svg)
+[![Coverage Status](https://coveralls.io/repos/larvit/larvitfs/badge.svg)](https://coveralls.io/github/larvit/larvitfs)
 
 # larvitfs
 
@@ -10,12 +11,11 @@ The whole module is synchronous to work well with various template engines and o
 
 ### Load module
 
-All files are resolved relative to process.cwd() so make sure it is set correctly.
-
 Paths are relative to process.cwd() as first priority. If nothing is found there, all modules will be tested as relative to this path to try to find a matching file. The modules are searched in the order given in package.json dependencies.
 
 ```javascript
-const lfs = require('larvitfs');
+const Lfs = require('larvitfs'),
+      lfs = new Lfs({'basePath': process.cwd()}); // basePath defaults to process.cwd() if left out
 ```
 
 ### getPathSync()
@@ -31,14 +31,20 @@ Lets say you'd wish to serve a HTML file, index.html. The default file resides i
 If we run getPathSync('public/index.html'); we'll get the full path back:
 
 ```javascript
-const fullPath = require('larvitfs').getPathSync('public/index.html');
+const Lfs      = require('larvitfs'),
+      lfs      = new Lfs();
+
+console.log(lfs.getPathSync('public/index.html'));
 // /app/absolute/path/node_modules/foobar/public/index.html
 ```
 
 But if we add this file to our own application, in ./public/index.html, that file will be higher in priority and will be returned instead:
 
 ```javascript
-const fullPath = require('larvitfs').getPathSync('public/index.html');
+const Lfs      = require('larvitfs'),
+      lfs      = new Lfs();
+
+console.log(lfs.getPathSync('public/index.html'));
 // /app/absolute/path/public/index.html
 ```
 
