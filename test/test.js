@@ -94,3 +94,15 @@ test('Fetch deep file, cached', function (t) {
 	t.equal(resolvedPath,	cachedResolvedPath);
 	t.end();
 });
+
+test('Clear cache when reached threshold', function (t) {
+	const	lfs	= new Lfs({'basePath': __dirname + '/..', 'cacheMaxSize': 1});
+
+	t.equal(lfs.cache.size,	0);
+	lfs.getPathSync('public/dummy.txt');
+	t.equal(lfs.cache.size,	1);
+	lfs.getPathSync('public/muppet.txt');
+	t.equal(lfs.cache.size,	1);
+
+	t.end();
+});

@@ -14,6 +14,10 @@ function Lfs(options) {
 		options.basePath	= process.cwd();
 	}
 
+	if ( ! options.cacheMaxSize) {
+		options.cacheMaxSize	= 10000;
+	}
+
 	this.cache	= new Map();
 	this.paths	= [options.basePath];
 	this.options	= options;
@@ -31,7 +35,7 @@ Lfs.prototype.getPathSync = function getPathSync(pathToResolve) {
 	}
 
 	// Make sure we do not use up all the memory with caching violent amount of files
-	if (that.cache.size > 10000) {
+	if (that.cache.size >= that.options.cacheMaxSize) {
 		that.cache.clear();
 	}
 
