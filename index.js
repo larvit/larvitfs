@@ -47,9 +47,7 @@ Lfs.prototype.getPathSync = function getPathSync(pathToResolve) {
 
 			if (stat.isFile()) {
 				that.cache.set(pathToResolve, pathToResolve);
-			} else {
-				that.cache.set(pathToResolve, false);
-			}
+			} // No else here, since stat.isfile() throws on error
 		} catch (err) {
 			log.verbose(logPrefix + 'fs.statSync() threw err: ' + err.message);
 			that.cache.set(pathToResolve, false);
