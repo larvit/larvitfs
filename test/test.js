@@ -42,7 +42,7 @@ test('Fetch dummy.txt from absolute path', function (t) {
 	});
 });
 
-test('Fetch foo.txt from a test module but we pretend its local', function(t) {
+test('Fetch foo.txt from a test module but we pretend its local', function (t) {
 	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
 		resolvedPath	= lfs.getPathSync('public/foo.txt');
 
@@ -54,11 +54,11 @@ test('Fetch foo.txt from a test module but we pretend its local', function(t) {
 	});
 });
 
-test('Fetch muppet.txt from a dependency to a module', function(t) {
+test('Fetch muppet.txt from a dependency to a module', function (t) {
 	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
 		resolvedPath	= lfs.getPathSync('public/muppet.txt');
 
-	fs.readFile(resolvedPath, function(err, data) {
+	fs.readFile(resolvedPath, function (err, data) {
 		if (err) throw err;
 
 		t.equal(data.toString(),	'oh, such muppet');
@@ -66,7 +66,7 @@ test('Fetch muppet.txt from a dependency to a module', function(t) {
 	});
 });
 
-test('Fail to fetch nonexisting.txt', function(t) {
+test('Fail to fetch nonexisting.txt', function (t) {
 	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
 		resolvedPath	= lfs.getPathSync('nonexisting.txt');
 
@@ -74,14 +74,23 @@ test('Fail to fetch nonexisting.txt', function(t) {
 	t.end();
 });
 
-test('Fetch deep file', function(t) {
+test('Fetch deep file', function (t) {
 	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
 		resolvedPath	= lfs.getPathSync('public/baz/mek.txt');
 
-	fs.readFile(resolvedPath, function(err, data) {
+	fs.readFile(resolvedPath, function (err, data) {
 		if (err) throw err;
 
 		t.equal(data.toString(),	'hest');
 		t.end();
 	});
+});
+
+test('Fetch deep file, cached', function (t) {
+	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
+		resolvedPath	= lfs.getPathSync('public/baz/mek.txt'),
+		cachedResolvedPath	= lfs.getPathSync('public/baz/mek.txt');
+
+	t.equal(resolvedPath,	cachedResolvedPath);
+	t.end();
 });
