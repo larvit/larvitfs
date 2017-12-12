@@ -74,6 +74,14 @@ test('Fail to fetch nonexisting.txt', function (t) {
 	t.end();
 });
 
+test('Fail to fetch absolute pathed /hurr/burr/nonexisting.txt', function (t) {
+	const	lfs	= new Lfs(),
+		resolvedPath	= lfs.getPathSync('/hurr/burr/nonexisting.txt');
+
+	t.equal(resolvedPath,	false);
+	t.end();
+});
+
 test('Fetch deep file', function (t) {
 	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
 		resolvedPath	= lfs.getPathSync('public/baz/mek.txt');
