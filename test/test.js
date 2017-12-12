@@ -15,15 +15,18 @@ log.remove(log.transports.Console);
 });/**/
 
 test('Fetch dummy.txt from local public', function (t) {
-	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
-		resolvedPath	= lfs.getPathSync('public/dummy.txt');
+	process.chdir(__dirname + '/..');
+	(function (){
+		const	lfs	= new Lfs(),
+			resolvedPath	= lfs.getPathSync('public/dummy.txt');
 
-	fs.readFile(resolvedPath, function (err, data) {
-		if (err) throw err;
+		fs.readFile(resolvedPath, function (err, data) {
+			if (err) throw err;
 
-		t.equal(data.toString(),	'Horses does not exist');
-		t.end();
-	});
+			t.equal(data.toString(),	'Horses does not exist');
+			t.end();
+		});
+	})();
 });
 
 test('Fetch dummy.txt from absolute path', function (t) {
