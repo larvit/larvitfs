@@ -63,7 +63,7 @@ Lfs.prototype.getPathSync = function getPathSync(pathToResolve) {
 			log.silly(logPrefix + 'Checking for ' + testPath);
 
 			// Lookup if this file exists
-			try {
+			if (fs.existsSync(testPath)) {
 				let	stat	= fs.statSync(testPath);
 
 				if (stat.isFile()) {
@@ -71,8 +71,8 @@ Lfs.prototype.getPathSync = function getPathSync(pathToResolve) {
 					that.cache.set(pathToResolve, testPath);
 					return testPath;
 				}
-			} catch (err) {
-				log.silly(logPrefix + testPath + ' does not exist, err: ' + err.message);
+			} else {
+				log.silly(logPrefix + '"' + testPath + '" does not exist');
 			}
 		}
 
@@ -101,14 +101,17 @@ Lfs.prototype.loadPaths = function loadPaths() {
 	// First go through the dependencies in the package file
 	if (package_json) {
 		for (let depPath of Object.keys(package_json.dependencies)) {
-			const	modPath	= path.normalize(that.options.basePath + '/node_modules/' + depPath),
-				stats	= fs.statSync(modPath);
+			const	modPath	= path.normalize(that.options.basePath + '/node_modules/' + depPath);
 
-			if ( ! stats || ! stats.isDirectory()) {
-				log.info(logPrefix + 'Module "' + depPath + '" not found at ' + modPath);
-			} else {
-				log.debug(logPrefix + 'Adding ' + depPath + ' to paths with full path ' + modPath);
-				that.paths.push(modPath);
+			if (fs.existsSync(modPath)) {
+				const	stats	= fs.statSync(modPath);
+
+				if ( ! stats || ! stats.isDirectory()) {
+					log.info(logPrefix + 'Module "' + depPath + '" not found at ' + modPath);
+				} else {
+					log.debug(logPrefix + 'Adding "' + depPath + '" to paths with full path ' + modPath);
+					that.paths.push(modPath);
+				}
 			}
 		}
 	}

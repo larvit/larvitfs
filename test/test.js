@@ -42,6 +42,18 @@ test('Fetch dummy.txt from absolute path', function (t) {
 	});
 });
 
+test('Fetch dummy.txt from path without package.json', function (t) {
+	const	lfs	= new Lfs({'basePath': __dirname + '/../test_module/public'}),
+		resolvedPath	= lfs.getPathSync('dummy.txt');
+
+	fs.readFile(resolvedPath, function (err, data) {
+		if (err) throw err;
+
+		t.equal(data.toString(),	'nope');
+		t.end();
+	});
+});
+
 test('Fetch foo.txt from a test module but we pretend its local', function (t) {
 	const	lfs	= new Lfs({'basePath': __dirname + '/..'}),
 		resolvedPath	= lfs.getPathSync('public/foo.txt');
@@ -112,5 +124,21 @@ test('Clear cache when reached threshold', function (t) {
 	lfs.getPathSync('public/muppet.txt');
 	t.equal(lfs.cache.size,	1);
 
+	t.end();
+});
+
+test('Gracefully handle missing module in package.json', function (t) {
+	const	lfs	= new Lfs({'basePath': __dirname + '/../test_module'}),
+		resolvedPath	= lfs.getPathSync('public/muppet.txt');
+
+	t.equal(resolvedPath,	false);
+	t.end();
+});
+
+test('Gracefully handle when module is a file', function (t) {
+	const	lfs	= new Lfs({'basePath': __dirname + '/../test_module_broken'}),
+		resolvedPath	= lfs.getPathSync('nope');
+
+	t.equal(resolvedPath,	false);
 	t.end();
 });

@@ -1,0 +1,8 @@
+{
+  "name": "test_module_broken",
+  "description": "Testing module for local use only",
+  "version": "0.0.1",
+  "dependencies": {
+    "vlepp": "doesnotexist"
+  }
+}

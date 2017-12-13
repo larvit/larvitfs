@@ -1,6 +1,6 @@
+/node_modules
 config/amqp_test.json
 config/db_test.json
 coverage
-node_modules
 npm-debug.log*
 package-lock.json
