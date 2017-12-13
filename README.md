@@ -7,6 +7,12 @@ Get a local file from a "virtual" hierarchy, merged filesystem inspired by the [
 
 The whole module is synchronous to work well with various template engines and other stuff. Since it returnes the resolved files from a local cache, this should normally not be a problem. However, if this module is used for thousands and thousands of files with different filenames this will have an performance impact.
 
+## Installation
+
+```bash
+npm i larvitfs
+```
+
 ## Usage
 
 ### Load module
