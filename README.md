@@ -15,7 +15,10 @@ Paths are relative to process.cwd() as first priority. If nothing is found there
 
 ```javascript
 const Lfs = require('larvitfs'),
-      lfs = new Lfs({'basePath': process.cwd()}); // basePath defaults to process.cwd() if left out
+      lfs = new Lfs({
+        'basePath':     process.cwd(), // OPTIONAL
+        'cacheMaxSize': 10000          // OPTIONAL
+      });
 ```
 
 ### getPathSync()
@@ -31,8 +34,8 @@ Lets say you'd wish to serve a HTML file, index.html. The default file resides i
 If we run getPathSync('public/index.html'); we'll get the full path back:
 
 ```javascript
-const Lfs      = require('larvitfs'),
-      lfs      = new Lfs();
+const Lfs = require('larvitfs'),
+      lfs = new Lfs();
 
 console.log(lfs.getPathSync('public/index.html'));
 // /app/absolute/path/node_modules/foobar/public/index.html
@@ -41,8 +44,8 @@ console.log(lfs.getPathSync('public/index.html'));
 But if we add this file to our own application, in ./public/index.html, that file will be higher in priority and will be returned instead:
 
 ```javascript
-const Lfs      = require('larvitfs'),
-      lfs      = new Lfs();
+const Lfs = require('larvitfs'),
+      lfs = new Lfs();
 
 console.log(lfs.getPathSync('public/index.html'));
 // /app/absolute/path/public/index.html
