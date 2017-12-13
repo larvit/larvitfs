@@ -3,7 +3,7 @@
 
 # larvitfs
 
-Get a local file from a "virtual" hierarchy, merged filesystem inspired by the [Kohana Framework Cascading Filesystem](https://kohanaframework.org/3.3/guide/kohana/files).
+Get a local file from a "virtual" hierarchy, merged filesystem inspired by the [Kohana Framework Cascading Filesystem](https://v2docs.kohanaframework.org/3.3/guide/kohana/files).
 
 The whole module is synchronous to work well with various template engines and other stuff. Since it returnes the resolved files from a local cache, this should normally not be a problem. However, if this module is used for thousands and thousands of files with different filenames this will have an performance impact.
 
