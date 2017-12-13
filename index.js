@@ -42,14 +42,11 @@ Lfs.prototype.getPathSync = function getPathSync(pathToResolve) {
 	if (pathToResolve[0] === '/') {
 		log.debug(logPrefix + 'starts with "/", only check absolute path');
 
-		try {
-			let	stat	= fs.statSync(pathToResolve);
-
-			if (stat.isFile()) {
-				that.cache.set(pathToResolve, pathToResolve);
-			} // No else here, since stat.isfile() throws on error
-		} catch (err) {
-			log.verbose(logPrefix + 'fs.statSync() threw err: ' + err.message);
+		if (fs.existsSync(pathToResolve)) {
+			log.debug(logPrefix + '"' + pathToResolve + '" found - loading to cache');
+			that.cache.set(pathToResolve, pathToResolve);
+		} else {
+			log.debug(logPrefix + '"' + pathToResolve + '" not found - setting false in cache');
 			that.cache.set(pathToResolve, false);
 		}
 
@@ -64,13 +61,9 @@ Lfs.prototype.getPathSync = function getPathSync(pathToResolve) {
 
 			// Lookup if this file exists
 			if (fs.existsSync(testPath)) {
-				let	stat	= fs.statSync(testPath);
-
-				if (stat.isFile()) {
-					log.debug(logPrefix + 'Found "' + testPath + '" - loading to cache');
-					that.cache.set(pathToResolve, testPath);
-					return testPath;
-				}
+				log.debug(logPrefix + '"' + testPath + '" found - loading to cache');
+				that.cache.set(pathToResolve, testPath);
+				return testPath;
 			} else {
 				log.silly(logPrefix + '"' + testPath + '" does not exist');
 			}
