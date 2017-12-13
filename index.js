@@ -92,7 +92,7 @@ Lfs.prototype.loadPaths = function loadPaths() {
 	}
 
 	// First go through the dependencies in the package file
-	if (package_json) {
+	if (package_json && package_json.dependencies) {
 		for (let depPath of Object.keys(package_json.dependencies)) {
 			const	modPath	= path.normalize(that.options.basePath + '/node_modules/' + depPath);
 

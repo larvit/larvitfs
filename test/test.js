@@ -142,3 +142,11 @@ test('Gracefully handle when module is a file', function (t) {
 	t.equal(resolvedPath,	false);
 	t.end();
 });
+
+test('Gracefully handle when package.json got no dependencies', function (t) {
+	const	lfs	= new Lfs({'basePath': __dirname + '/../test_module_nodeps'}),
+		resolvedPath	= lfs.getPathSync('nope');
+
+	t.equal(resolvedPath,	false);
+	t.end();
+});
