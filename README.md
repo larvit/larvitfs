@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/larvit/larvitfs.svg?branch=master)](https://travis-ci.org/larvit/larvitfs) [![Dependencies](https://david-dm.org/larvit/larvitfs.svg)](https://david-dm.org/larvit/larvitfs.svg)
-[![Coverage Status](https://coveralls.io/repos/larvit/larvitfs/badge.svg)](https://coveralls.io/github/larvit/larvitfs)
+[![Coverage Status](https://coveralls.io/repos/github/larvit/larvitfs/badge.svg)](https://coveralls.io/github/larvit/larvitfs)
 
 # larvitfs
 
