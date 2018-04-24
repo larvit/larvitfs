@@ -58,3 +58,19 @@ console.log(lfs.getPathSync('public/index.html'));
 ```
 
 All modules in node_modules will be searched for the given file. The priority is decided by the list order in dependencies in package.json.
+
+### getPathsSync()
+
+The idea with this function is to be able to get a list of paths sorted in the dependency order. First local paths, then dependency paths and then everything else.
+
+```javascript
+const Lfs = require('larvitfs'),
+      lfs = new Lfs();
+
+console.log(lfs.getPatshSync('public/index.html'));
+// [
+//	'/app/absolute/path/public/index.html',
+//	'/app/absolute/path/node_modules/directDependency/public/index.html',
+//	'/app/absolute/path/node_modules/indirectDependency/public/index.html'
+//]
+```

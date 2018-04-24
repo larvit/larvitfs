@@ -76,6 +76,110 @@ Lfs.prototype.getPathSync = function getPathSync(pathToResolve) {
 	}
 };
 
+Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
+	const logPrefix = topLogPrefix + 'getPathsSync() - ',
+		subResult	= [],
+		that	= this;
+
+	let	package_json,
+		local,
+		result	= [];
+
+	if ( ! target) {
+		log.warn(logPrefix + 'Invalid target');
+		return false;
+	}
+
+	if ( ! refreshCache && that.getPathsCache && that.getPathsCache[target]) return that.getPathsCache[target];
+
+	// First scan for local controllers
+	local = fs.readdirSync(that.options.basePath);
+
+	for (let i = 0; local[i] !== undefined; i ++) {
+		if (fs.existsSync(path.normalize(that.options.basePath + '/' + local[i]))) {
+			const stats = fs.statSync(path.normalize(that.options.basePath + '/' + local[i]));
+			if (stats && stats.isDirectory() && local[i] === target) {
+				result.push(path.normalize(that.options.basePath + '/' + local[i]));
+				break;
+			}
+		}
+	}
+
+	try {
+		package_json	= require(that.options.basePath + '/package.json');
+	} catch (err) {
+		log.info(logPrefix + 'Could not load package.json, err: ' + err.message);
+	}
+
+	// Then go through the dependencies in the package file
+	if (package_json && package_json.dependencies) {
+		for (let depPath of Object.keys(package_json.dependencies)) {
+			const	modPath	= path.normalize(that.options.basePath + '/node_modules/' + depPath);
+			if (fs.existsSync(modPath)) {
+				const	stats	= fs.statSync(modPath);
+				if (stats && stats.isDirectory()) {
+					for (const dir of fs.readdirSync(modPath)) {
+						if (dir === target) {
+							result.push(path.normalize(modPath + '/' + dir));
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Add all other paths, recursively
+	function loadPathsRec(thisPath) {
+		const subLogPrefix = logPrefix + 'loadPathsRec() - ';
+
+		let	thisPaths;
+
+		if (fs.existsSync(thisPath + '/' + target) && result.indexOf(path.normalize(thisPath + '/' + target)) === - 1) {
+			subResult.push(path.normalize(thisPath + '/' + target));
+			return;
+		}
+
+		if ( ! fs.existsSync(thisPath)) return;
+
+		thisPaths = fs.readdirSync(thisPath);
+
+		for (let i = 0; thisPaths[i] !==  undefined; i ++) {
+			try {
+				const	subStat	= fs.statSync(thisPath + '/' + thisPaths[i]);
+
+				if (subStat.isDirectory()) {
+					if (thisPaths[i] === target) {
+						if (result.indexOf(thisPath + '/' + thisPaths[i]) === - 1) {
+							subResult.push(path.normalize(thisPath + '/' + thisPaths[i]));
+						}
+					} else {
+						// if we've found a target dir, we do not wish to scan it
+						loadPathsRec(thisPath + '/' + thisPaths[i]);
+					}
+				}
+			} catch (err) {
+				log.warn(subLogPrefix + 'Could not read "' + thisPaths[i] + '": ' + err.message);
+			}
+		}
+	}
+
+	// Start in basePath
+	try {
+		loadPathsRec(that.options.basePath + '/node_modules');
+	} catch (err) {
+		log.info(logPrefix + 'Something went wrong: ' + err.message);
+	}
+
+	subResult.sort();
+	result = result.concat(subResult);
+
+	if ( ! that.getPathsCache) that.getPathsCache = {};
+	that.getPathsCache[target] = result;
+
+	return result;
+};
+
 // Load paths to local cache
 Lfs.prototype.loadPaths = function loadPaths() {
 	const	logPrefix	= topLogPrefix + 'Lfs.prototype.loadPaths() - ',

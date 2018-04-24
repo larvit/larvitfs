@@ -150,3 +150,19 @@ test('Gracefully handle when package.json got no dependencies', function (t) {
 	t.equal(resolvedPath,	false);
 	t.end();
 });
+
+test('getPathsSync, directory', function (t) {
+	const	lfs	= new Lfs({
+			'basePath': __dirname + '/test_environment/1',
+			'cacheMaxSize': 1
+		}),
+		result = lfs.getPathsSync('controllers');
+
+		console.log(result);
+	t.equal(result.length, 4);
+	t.equal(result[0].endsWith('test_environment/1/controllers'), true);
+	t.equal(result[1].endsWith('test_environment/1/node_modules/binkbonk/controllers'), true);
+	t.equal(result[2].endsWith('test_environment/1/node_modules/slinkslonk/controllers'), true);
+	t.equal(result[3].endsWith('test_environment/1/node_modules/binkbonk/node_modules/untz/controllers'), true);
+	t.end();
+});
