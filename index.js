@@ -171,7 +171,11 @@ Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 		log.info(logPrefix + 'Something went wrong: ' + err.message);
 	}
 
-	subResult.sort();
+	// the lower in the tree of node modules, the farther back in the array
+	subResult.sort(function (a, b) {
+		return a.lastIndexOf('node_modules') - b.lastIndexOf('node_modules');
+	});
+
 	result = result.concat(subResult);
 
 	if ( ! that.getPathsCache) that.getPathsCache = {};

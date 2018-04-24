@@ -1,3 +1,5 @@
+import { ENGINE_METHOD_DIGESTS } from 'constants';
+
 'use strict';
 
 const	test	= require('tape'),
@@ -158,7 +160,36 @@ test('getPathsSync, directory', function (t) {
 		}),
 		result = lfs.getPathsSync('controllers');
 
-		console.log(result);
+	t.equal(result.length, 4);
+	t.equal(result[0].endsWith('test_environment/1/controllers'), true);
+	t.equal(result[1].endsWith('test_environment/1/node_modules/binkbonk/controllers'), true);
+	t.equal(result[2].endsWith('test_environment/1/node_modules/slinkslonk/controllers'), true);
+	t.equal(result[3].endsWith('test_environment/1/node_modules/binkbonk/node_modules/untz/controllers'), true);
+	t.end();
+});
+
+test('getPathsSync, file', function (t) {
+	const	lfs	= new Lfs({
+			'basePath': __dirname + '/test_environment/1',
+			'cacheMaxSize': 1
+		}),
+		result = lfs.getPathsSync('foo.js');
+
+	t.equal(result.length, 4);
+	t.equal(result[0].endsWith('test_environment/1/controllers'), true);
+	t.equal(result[1].endsWith('test_environment/1/node_modules/binkbonk/controllers'), true);
+	t.equal(result[2].endsWith('test_environment/1/node_modules/slinkslonk/controllers'), true);
+	t.equal(result[3].endsWith('test_environment/1/node_modules/binkbonk/node_modules/untz/controllers'), true);
+	t.end();
+});
+
+test('getPathsSync, file and directory', function (t) {
+	const	lfs	= new Lfs({
+			'basePath': __dirname + '/test_environment/1',
+			'cacheMaxSize': 1
+		}),
+		result = lfs.getPathsSync('foo.js');
+
 	t.equal(result.length, 4);
 	t.equal(result[0].endsWith('test_environment/1/controllers'), true);
 	t.equal(result[1].endsWith('test_environment/1/node_modules/binkbonk/controllers'), true);
