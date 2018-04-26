@@ -78,7 +78,6 @@ Lfs.prototype.getPathSync = function getPathSync(pathToResolve) {
 
 Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 	const logPrefix = topLogPrefix + 'getPathsSync() - ',
-		subResult	= [],
 		that	= this;
 
 	let	package_json,

@@ -1,5 +1,8 @@
 {
+	"name": "test_environment",
+  "version": "0.0.1",
+  "description": "test stuff",
 	"dependencies": {
-	  "binkbonk": "^2.0.0"
+	  "binkbonk": "file:node_modules/binkbonk"
 	}
 }

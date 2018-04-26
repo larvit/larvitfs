@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "./node_modules/tape/bin/tape ./test/*"
+    "test": "./node_modules/tape/bin/tape ./test/*.js"
   },
   "repository": {
     "type": "git",
@@ -37,6 +37,7 @@
     "istanbul": "^0.4.5",
     "tape": "^4.8.0",
     "tape-eslint": "^1.2.1",
-    "test_module": "file:test_module"
+    "test_module": "file:test_module",
+    "test_environment": "file:test/test_environment/1"
   }
 }
