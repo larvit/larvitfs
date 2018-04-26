@@ -82,8 +82,8 @@ Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 		that	= this;
 
 	let	package_json,
-		local,
-		result	= [];
+		result	= [],
+		modules_result;
 
 	if ( ! target) {
 		log.warn(logPrefix + 'Invalid target');
@@ -92,18 +92,48 @@ Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 
 	if ( ! refreshCache && that.getPathsCache && that.getPathsCache[target]) return that.getPathsCache[target];
 
-	// First scan for local controllers
-	local = fs.readdirSync(that.options.basePath);
+	function searchPathsRec(thisPath, pathsToIgnore) {
+		const subLogPrefix = logPrefix + 'searchPathsRec() - ';
 
-	for (let i = 0; local[i] !== undefined; i ++) {
-		if (fs.existsSync(path.normalize(that.options.basePath + '/' + local[i]))) {
-			const stats = fs.statSync(path.normalize(that.options.basePath + '/' + local[i]));
-			if (stats && stats.isDirectory() && local[i] === target) {
-				result.push(path.normalize(that.options.basePath + '/' + local[i]));
-				break;
+		let	thisPaths,
+			result = [];
+
+		if ( ! pathsToIgnore) pathsToIgnore = [];
+
+		if (fs.existsSync(thisPath + '/' + target) && result.indexOf(path.normalize(thisPath + '/' + target)) === - 1 && pathsToIgnore.indexOf(thisPath) === - 1) {
+			result.push(path.normalize(thisPath + '/' + target));
+		}
+
+		if ( ! fs.existsSync(thisPath)) return result;
+
+		thisPaths = fs.readdirSync(thisPath);
+
+		for (let i = 0; thisPaths[i] !==  undefined; i ++) {
+			try {
+				const	subStat	= fs.statSync(thisPath + '/' + thisPaths[i]);
+
+				if (subStat.isDirectory()) {
+					if (thisPaths[i] === target) {
+						if (result.indexOf(thisPath + '/' + thisPaths[i]) === - 1) {
+							result.push(path.normalize(thisPath + '/' + thisPaths[i]));
+						}
+					} else {
+						if (pathsToIgnore.indexOf(thisPaths[i]) === - 1) {
+							// if we've found a target dir, we do not wish to scan it
+							result = result.concat(searchPathsRec(thisPath + '/' + thisPaths[i], pathsToIgnore));
+						}
+					}
+				}
+			} catch (err) {
+				log.warn(subLogPrefix + 'Could not read "' + thisPaths[i] + '": ' + err.message);
 			}
 		}
+
+		return result;
 	}
+
+	// First scan for local controllers
+	result = searchPathsRec(that.options.basePath, ['node_modules']);
 
 	try {
 		package_json	= require(that.options.basePath + '/package.json');
@@ -129,54 +159,21 @@ Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 		}
 	}
 
-	// Add all other paths, recursively
-	function loadPathsRec(thisPath) {
-		const subLogPrefix = logPrefix + 'loadPathsRec() - ';
-
-		let	thisPaths;
-
-		if (fs.existsSync(thisPath + '/' + target) && result.indexOf(path.normalize(thisPath + '/' + target)) === - 1) {
-			subResult.push(path.normalize(thisPath + '/' + target));
-			return;
-		}
-
-		if ( ! fs.existsSync(thisPath)) return;
-
-		thisPaths = fs.readdirSync(thisPath);
-
-		for (let i = 0; thisPaths[i] !==  undefined; i ++) {
-			try {
-				const	subStat	= fs.statSync(thisPath + '/' + thisPaths[i]);
-
-				if (subStat.isDirectory()) {
-					if (thisPaths[i] === target) {
-						if (result.indexOf(thisPath + '/' + thisPaths[i]) === - 1) {
-							subResult.push(path.normalize(thisPath + '/' + thisPaths[i]));
-						}
-					} else {
-						// if we've found a target dir, we do not wish to scan it
-						loadPathsRec(thisPath + '/' + thisPaths[i]);
-					}
-				}
-			} catch (err) {
-				log.warn(subLogPrefix + 'Could not read "' + thisPaths[i] + '": ' + err.message);
-			}
-		}
-	}
-
-	// Start in basePath
+	// Add all other paths, recursively, starting in basePath
 	try {
-		loadPathsRec(that.options.basePath + '/node_modules');
+		modules_result = searchPathsRec(that.options.basePath + '/node_modules');
 	} catch (err) {
 		log.info(logPrefix + 'Something went wrong: ' + err.message);
 	}
 
 	// the lower in the tree of node modules, the farther back in the array
-	subResult.sort(function (a, b) {
+	modules_result.sort(function (a, b) {
 		return a.lastIndexOf('node_modules') - b.lastIndexOf('node_modules');
 	});
 
-	result = result.concat(subResult);
+	for (let i = 0; modules_result[i] !== undefined; i ++) {
+		if (result.indexOf(modules_result[i]) === - 1) result.push(modules_result[i]);
+	}
 
 	if ( ! that.getPathsCache) that.getPathsCache = {};
 	that.getPathsCache[target] = result;

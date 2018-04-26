@@ -1,5 +1,3 @@
-import { ENGINE_METHOD_DIGESTS } from 'constants';
-
 'use strict';
 
 const	test	= require('tape'),
@@ -175,11 +173,10 @@ test('getPathsSync, file', function (t) {
 		}),
 		result = lfs.getPathsSync('foo.js');
 
-	t.equal(result.length, 4);
-	t.equal(result[0].endsWith('test_environment/1/controllers'), true);
-	t.equal(result[1].endsWith('test_environment/1/node_modules/binkbonk/controllers'), true);
-	t.equal(result[2].endsWith('test_environment/1/node_modules/slinkslonk/controllers'), true);
-	t.equal(result[3].endsWith('test_environment/1/node_modules/binkbonk/node_modules/untz/controllers'), true);
+	t.equal(result.length, 3);
+	t.equal(result[0].endsWith('test_environment/1/controllers/foo.js'), true);
+	t.equal(result[1].endsWith('test_environment/1/node_modules/binkbonk/controllers/v1.2/foo.js'), true);
+	t.equal(result[2].endsWith('test_environment/1/node_modules/slinkslonk/controllers/v1.0/foo.js'), true);
 	t.end();
 });
 
@@ -188,12 +185,39 @@ test('getPathsSync, file and directory', function (t) {
 			'basePath': __dirname + '/test_environment/1',
 			'cacheMaxSize': 1
 		}),
-		result = lfs.getPathsSync('foo.js');
+		result = lfs.getPathsSync('/controllers/foo.js');
 
-	t.equal(result.length, 4);
-	t.equal(result[0].endsWith('test_environment/1/controllers'), true);
-	t.equal(result[1].endsWith('test_environment/1/node_modules/binkbonk/controllers'), true);
-	t.equal(result[2].endsWith('test_environment/1/node_modules/slinkslonk/controllers'), true);
-	t.equal(result[3].endsWith('test_environment/1/node_modules/binkbonk/node_modules/untz/controllers'), true);
+	t.equal(result.length, 1);
+	t.equal(result[0].endsWith('test_environment/1/controllers/foo.js'), true);
 	t.end();
+});
+
+test('getPathsSync, cache test', function (t) {
+	const	lfs	= new Lfs({
+			'basePath': __dirname + '/test_environment/1',
+			'cacheMaxSize': 1
+		});
+	
+	let	result;
+
+	// create tmp file to avoid messing up the other tests
+	fs.closeSync(fs.openSync(__dirname + '/test_environment/1/controllers/woo.js', 'w'));
+
+	result = lfs.getPathsSync('/controllers/woo.js');
+
+	t.equal(result.length, 1);
+	t.equal(result[0].endsWith('test_environment/1/controllers/woo.js'), true);
+	
+	fs.unlink(__dirname + '/test_environment/1/controllers/woo.js', function (err) {
+		if (err) throw err;
+
+		result = lfs.getPathsSync('/controllers/woo.js');
+		t.equal(result.length, 1);
+		t.equal(result[0].endsWith('test_environment/1/controllers/woo.js'), true);
+
+		result = lfs.getPathsSync('/controllers/woo.js', true);
+		t.equal(result.length, 0);
+
+		t.end();
+	});
 });
