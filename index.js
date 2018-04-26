@@ -113,7 +113,7 @@ Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 
 				if (subStat.isDirectory()) {
 					if (thisPaths[i] === target) {
-						if (result.indexOf(thisPath + '/' + thisPaths[i]) === - 1) {
+						if (result.indexOf(path.normalize(thisPath + '/' + thisPaths[i])) === - 1) {
 							result.push(path.normalize(thisPath + '/' + thisPaths[i]));
 						}
 					} else {
@@ -148,7 +148,7 @@ Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 				const	stats	= fs.statSync(modPath);
 				if (stats && stats.isDirectory()) {
 					for (const dir of fs.readdirSync(modPath)) {
-						if (dir === target) {
+						if (dir === target && result.indexOf(path.normalize(modPath + '/' + dir)) === - 1) {
 							result.push(path.normalize(modPath + '/' + dir));
 							break;
 						}

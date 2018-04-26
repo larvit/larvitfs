@@ -151,6 +151,17 @@ test('Gracefully handle when package.json got no dependencies', function (t) {
 	t.end();
 });
 
+test('getPathsSync, invalid target', function (t) {
+	const	lfs	= new Lfs({
+			'basePath': __dirname + '/test_environment/1',
+			'cacheMaxSize': 1
+		}),
+		result = lfs.getPathsSync();
+
+	t.equal(result, false);
+	t.end();
+});
+
 test('getPathsSync, directory', function (t) {
 	const	lfs	= new Lfs({
 			'basePath': __dirname + '/test_environment/1',
