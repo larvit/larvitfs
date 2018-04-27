@@ -177,6 +177,17 @@ test('getPathsSync, directory', function (t) {
 	t.end();
 });
 
+test('getPathsSync, invalid base path', function (t) {
+	const	lfs	= new Lfs({
+			'basePath': __dirname + '/test_environment/X',
+			'cacheMaxSize': 1
+		}),
+		result = lfs.getPathsSync('balja');
+
+	t.equal(result.length, 0);
+	t.end();
+});
+
 test('getPathsSync, file', function (t) {
 	const	lfs	= new Lfs({
 			'basePath': __dirname + '/test_environment/1',

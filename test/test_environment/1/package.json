@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "test stuff",
 	"dependencies": {
-	  "binkbonk": "file:node_modules/binkbonk"
+		"binkbonk": "file:node_modules/binkbonk",
+		"bankbank": "file:this_does_not_exist"
 	}
 }
