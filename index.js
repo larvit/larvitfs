@@ -77,25 +77,27 @@ Lfs.prototype.getPathSync = function getPathSync(pathToResolve) {
 };
 
 Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
-	const logPrefix = topLogPrefix + 'getPathsSync() - ',
+	const	logPrefix	= topLogPrefix + 'getPathsSync() - ',
 		that	= this;
 
-	let	package_json,
-		result	= [],
-		modules_result;
+	let	result	= [],
+		modules_result,
+		package_json;
 
 	if ( ! target) {
 		log.warn(logPrefix + 'Invalid target');
 		return false;
 	}
 
-	if ( ! refreshCache && that.getPathsCache && that.getPathsCache[target]) return that.getPathsCache[target];
+	if ( ! refreshCache && that.getPathsCache && that.getPathsCache[target]) {
+		return that.getPathsCache[target];
+	}
 
 	function searchPathsRec(thisPath, pathsToIgnore) {
-		const subLogPrefix = logPrefix + 'searchPathsRec() - ';
+		const	subLogPrefix	= logPrefix + 'searchPathsRec() - ';
 
-		let	thisPaths,
-			result = [];
+		let	result	= [],
+			thisPaths;
 
 		if ( ! pathsToIgnore) pathsToIgnore = [];
 
@@ -103,24 +105,20 @@ Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 			result.push(path.normalize(thisPath + '/' + target));
 		}
 
-		if ( ! fs.existsSync(thisPath)) return result;
+		if ( ! fs.existsSync(thisPath)) {
+			return result;
+		}
 
-		thisPaths = fs.readdirSync(thisPath);
+		thisPaths	= fs.readdirSync(thisPath);
 
 		for (let i = 0; thisPaths[i] !==  undefined; i ++) {
 			try {
 				const	subStat	= fs.statSync(thisPath + '/' + thisPaths[i]);
 
 				if (subStat.isDirectory()) {
-					if (thisPaths[i] === target) {
-						if (result.indexOf(path.normalize(thisPath + '/' + thisPaths[i])) === - 1) {
-							result.push(path.normalize(thisPath + '/' + thisPaths[i]));
-						}
-					} else {
-						if (pathsToIgnore.indexOf(thisPaths[i]) === - 1) {
-							// if we've found a target dir, we do not wish to scan it
-							result = result.concat(searchPathsRec(thisPath + '/' + thisPaths[i], pathsToIgnore));
-						}
+					if (thisPaths[i] !== target && pathsToIgnore.indexOf(thisPaths[i]) === - 1) {
+						// If we've found a target dir, we do not wish to scan it
+						result = result.concat(searchPathsRec(thisPath + '/' + thisPaths[i], pathsToIgnore));
 					}
 				}
 			} catch (err) {
@@ -132,7 +130,7 @@ Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 	}
 
 	// First scan for local controllers
-	result = searchPathsRec(that.options.basePath, ['node_modules']);
+	result	= searchPathsRec(that.options.basePath, ['node_modules']);
 
 	try {
 		package_json	= require(that.options.basePath + '/package.json');
@@ -160,22 +158,26 @@ Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 
 	// Add all other paths, recursively, starting in basePath
 	try {
-		modules_result = searchPathsRec(that.options.basePath + '/node_modules');
+		modules_result	= searchPathsRec(that.options.basePath + '/node_modules');
 	} catch (err) {
 		log.info(logPrefix + 'Something went wrong: ' + err.message);
 	}
 
-	// the lower in the tree of node modules, the farther back in the array
+	// The lower in the tree of node modules, the farther back in the array
 	modules_result.sort(function (a, b) {
 		return a.lastIndexOf('node_modules') - b.lastIndexOf('node_modules');
 	});
 
 	for (let i = 0; modules_result[i] !== undefined; i ++) {
-		if (result.indexOf(modules_result[i]) === - 1) result.push(modules_result[i]);
+		if (result.indexOf(modules_result[i]) === - 1) {
+			result.push(modules_result[i]);
+		}
 	}
 
-	if ( ! that.getPathsCache) that.getPathsCache = {};
-	that.getPathsCache[target] = result;
+	if ( ! that.getPathsCache) {
+		that.getPathsCache	= {};
+	}
+	that.getPathsCache[target]	= result;
 
 	return result;
 };
