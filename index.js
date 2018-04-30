@@ -99,17 +99,22 @@ Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 		let	result	= [],
 			thisPaths;
 
-		if ( ! pathsToIgnore) pathsToIgnore = [];
+		if ( ! pathsToIgnore) pathsToIgnore	= [];
 
-		if (fs.existsSync(thisPath + '/' + target) && result.indexOf(path.normalize(thisPath + '/' + target)) === - 1 && pathsToIgnore.indexOf(thisPath) === - 1) {
-			result.push(path.normalize(thisPath + '/' + target));
-		}
+		try {
+			if (fs.existsSync(thisPath + '/' + target) && result.indexOf(path.normalize(thisPath + '/' + target)) === - 1 && pathsToIgnore.indexOf(thisPath) === - 1) {
+				result.push(path.normalize(thisPath + '/' + target));
+			}
 
-		if ( ! fs.existsSync(thisPath)) {
+			if ( ! fs.existsSync(thisPath)) {
+				return result;
+			}
+
+			thisPaths	= fs.readdirSync(thisPath);
+		} catch (err) {
+			log.error(subLogPrefix + 'throwed fs error: ' + err.message);
 			return result;
 		}
-
-		thisPaths	= fs.readdirSync(thisPath);
 
 		for (let i = 0; thisPaths[i] !==  undefined; i ++) {
 			try {
@@ -118,11 +123,11 @@ Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 				if (subStat.isDirectory()) {
 					if (thisPaths[i] !== target && pathsToIgnore.indexOf(thisPaths[i]) === - 1) {
 						// If we've found a target dir, we do not wish to scan it
-						result = result.concat(searchPathsRec(thisPath + '/' + thisPaths[i], pathsToIgnore));
+						result	= result.concat(searchPathsRec(thisPath + '/' + thisPaths[i], pathsToIgnore));
 					}
 				}
 			} catch (err) {
-				log.warn(subLogPrefix + 'Could not read "' + thisPaths[i] + '": ' + err.message);
+				log.error(subLogPrefix + 'Could not read "' + thisPaths[i] + '": ' + err.message);
 			}
 		}
 
@@ -139,29 +144,30 @@ Lfs.prototype.getPathsSync = function getPathsSync(target, refreshCache) {
 	}
 
 	// Then go through the dependencies in the package file
-	if (package_json && package_json.dependencies) {
-		for (let depPath of Object.keys(package_json.dependencies)) {
-			const	modPath	= path.normalize(that.options.basePath + '/node_modules/' + depPath);
-			if (fs.existsSync(modPath)) {
-				const	stats	= fs.statSync(modPath);
-				if (stats && stats.isDirectory()) {
-					for (const dir of fs.readdirSync(modPath)) {
-						if (dir === target && result.indexOf(path.normalize(modPath + '/' + dir)) === - 1) {
-							result.push(path.normalize(modPath + '/' + dir));
-							break;
+	try {
+		if (package_json && package_json.dependencies) {
+			for (let depPath of Object.keys(package_json.dependencies)) {
+				const	modPath	= path.normalize(that.options.basePath + '/node_modules/' + depPath);
+				if (fs.existsSync(modPath)) {
+					const	stats	= fs.statSync(modPath);
+					if (stats && stats.isDirectory()) {
+						for (const dir of fs.readdirSync(modPath)) {
+							if (dir === target && result.indexOf(path.normalize(modPath + '/' + dir)) === - 1) {
+								result.push(path.normalize(modPath + '/' + dir));
+								break;
+							}
 						}
 					}
 				}
 			}
 		}
+	} catch (err) {
+		log.error(logPrefix + 'Could not fetch info about dependencies. err: ' + err.message);
+		return false;
 	}
 
 	// Add all other paths, recursively, starting in basePath
-	try {
-		modules_result	= searchPathsRec(that.options.basePath + '/node_modules');
-	} catch (err) {
-		log.info(logPrefix + 'Something went wrong: ' + err.message);
-	}
+	modules_result	= searchPathsRec(that.options.basePath + '/node_modules');
 
 	// The lower in the tree of node modules, the farther back in the array
 	modules_result.sort(function (a, b) {

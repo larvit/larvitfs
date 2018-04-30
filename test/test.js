@@ -247,3 +247,53 @@ test('getPathsSync, cache test', function (t) {
 		t.end();
 	});
 });
+
+test('getPathsSync, fs.statsSync throwing error', function (t) {
+	const	org_statSync	= fs.statSync,
+		lfs	= new Lfs({
+			'basePath':	__dirname + '/test_environment/1',
+			'cacheMaxSize':	1
+		});
+
+	let	result;
+
+	function statSync(dir) {
+		if (fs.throw === true) {
+			throw new Error('something went wrong');
+		}
+		return org_statSync(dir);
+	}
+
+	fs.statSync	= statSync;
+	fs.throw	= true;
+	result	= lfs.getPathsSync('foo.js');
+	fs.throw	= false;
+
+	t.equal(result,	false);
+	t.end();
+});
+
+test('getPathsSync, fs.readdirSync throwing error', function (t) {
+	const	org_readdirSync	= fs.readdirSync,
+		lfs	= new Lfs({
+			'basePath':	__dirname + '/test_environment/1',
+			'cacheMaxSize':	1
+		});
+
+	let	result;
+
+	function readdirSync(dir) {
+		if (fs.throw === true) {
+			throw new Error('something went wrong');
+		}
+		return org_readdirSync(dir);
+	}
+
+	fs.readdirSync	= readdirSync;
+	fs.throw	= true;
+	result	= lfs.getPathsSync('foo.js');
+	fs.throw	= false;
+
+	t.equal(result,	false);
+	t.end();
+});
