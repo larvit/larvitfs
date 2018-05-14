@@ -215,12 +215,10 @@ test('getPathsSync, file and directory', function (t) {
 });
 
 test('getPathsSync, cache test', function (t) {
-	const	lfs	= new Lfs(
-		{
-			'basePath':	__dirname + '/test_environment/1',
-			'cacheMaxSize':	1
-		}
-	);
+	const lfs = new Lfs({
+		'basePath':	__dirname + '/test_environment/1',
+		'cacheMaxSize':	1
+	});
 
 	let	result;
 
