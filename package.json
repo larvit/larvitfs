@@ -1,6 +1,6 @@
 {
   "name": "larvitfs",
-  "version": "2.0.4",
+  "version": "2.1.0",
   "description": "Cascading filesystem for node.js",
   "main": "index.js",
   "directories": {
@@ -28,16 +28,16 @@
     "url": "https://github.com/larvit/larvitfs/issues"
   },
   "homepage": "https://github.com/larvit/larvitfs#readme",
-  "dependencies": {
-    "winston": "^3.0.0"
-  },
   "devDependencies": {
     "coveralls": "3.0.2",
-    "eslint": "4.19.1",
+    "eslint": "5.4.0",
     "istanbul": "0.4.5",
     "tape": "4.9.1",
     "tape-eslint": "1.2.1",
     "test_module": "file:test_module",
     "test_environment": "file:test/test_environment/1"
+  },
+  "dependencies": {
+    "larvitutils": "^2.1.0"
   }
 }
