@@ -128,7 +128,7 @@ test('Gracefully handle missing module in package.json', function (t) {
 });
 
 test('Gracefully handle when module is a file', function (t) {
-	const lfs          = new Lfs({'basePath': __dirname + '/../test_module_broken'});
+	const lfs          = new Lfs({'basePath': __dirname + '/../test_module_broken', 'log': log});
 	const resolvedPath = lfs.getPathSync('nope');
 
 	t.equal(resolvedPath, false);
@@ -158,7 +158,8 @@ test('getPathsSync, invalid target', function (t) {
 test('getPathsSync, directory', function (t) {
 	const lfs = new Lfs({
 		'basePath':     __dirname + '/test_environment/1',
-		'cacheMaxSize': 1
+		'cacheMaxSize': 1,
+		'log':          log
 	});
 	const result = lfs.getPathsSync('controllers');
 
@@ -173,7 +174,8 @@ test('getPathsSync, directory', function (t) {
 test('getPathsSync, invalid base path', function (t) {
 	const lfs = new Lfs({
 		'basePath':     __dirname + '/test_environment/X',
-		'cacheMaxSize': 1
+		'cacheMaxSize': 1,
+		'log':          log
 	});
 	const result = lfs.getPathsSync('balja');
 
@@ -184,7 +186,8 @@ test('getPathsSync, invalid base path', function (t) {
 test('getPathsSync, file', function (t) {
 	const lfs = new Lfs({
 		'basePath':     __dirname + '/test_environment/1',
-		'cacheMaxSize': 1
+		'cacheMaxSize': 1,
+		'log':          log
 	});
 	const result = lfs.getPathsSync('foo.js');
 
@@ -198,7 +201,8 @@ test('getPathsSync, file', function (t) {
 test('getPathsSync, file and directory', function (t) {
 	const lfs = new Lfs({
 		'basePath':     __dirname + '/test_environment/1',
-		'cacheMaxSize': 1
+		'cacheMaxSize': 1,
+		'log':          log
 	});
 	const result = lfs.getPathsSync('/controllers/foo.js');
 
@@ -210,7 +214,8 @@ test('getPathsSync, file and directory', function (t) {
 test('getPathsSync, cache test', function (t) {
 	const lfs = new Lfs({
 		'basePath':     __dirname + '/test_environment/1',
-		'cacheMaxSize': 1
+		'cacheMaxSize': 1,
+		'log':          log
 	});
 
 	let result;
@@ -244,7 +249,8 @@ test('getPathsSync, fs.statsSync throwing error', function (t) {
 	const org_statSync = fs.statSync;
 	const lfs          = new Lfs({
 		'basePath':     __dirname + '/test_environment/1',
-		'cacheMaxSize': 1
+		'cacheMaxSize': 1,
+		'log':          log
 	});
 
 	let result;
@@ -270,7 +276,8 @@ test('getPathsSync, fs.readdirSync throwing error', function (t) {
 	const org_readdirSync = fs.readdirSync;
 	const lfs = new Lfs({
 		'basePath':     __dirname + '/test_environment/1',
-		'cacheMaxSize': 1
+		'cacheMaxSize': 1,
+		'log':          log
 	});
 
 	let result;
