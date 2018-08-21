@@ -67,7 +67,7 @@ The idea with this function is to be able to get a list of paths sorted in the d
 const Lfs = require('larvitfs'),
       lfs = new Lfs();
 
-console.log(lfs.getPatshSync('public/index.html'));
+console.log(lfs.getPathsSync('public/index.html'));
 // [
 //	'/app/absolute/path/public/index.html',
 //	'/app/absolute/path/node_modules/directDependency/public/index.html',
