@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/larvit/larvitfs#readme",
   "dependencies": {
-    "winston": "^2.4.0"
+    "winston": "^3.0.0"
   },
   "devDependencies": {
     "coveralls": "3.0.2",
