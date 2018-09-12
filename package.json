@@ -1,6 +1,6 @@
 {
   "name": "larvitfs",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Cascading filesystem for node.js",
   "main": "index",
   "directories": {
