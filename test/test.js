@@ -2,7 +2,7 @@
 
 const LUtils = require('larvitutils');
 const test   = require('tape');
-const Lfs    = require(__dirname + '/../index.js');
+const Lfs    = require(__dirname + '/../index');
 const log    = new (new LUtils()).Log('none');
 const fs     = require('fs');
 

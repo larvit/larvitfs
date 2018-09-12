@@ -19,6 +19,8 @@ npm i larvitfs
 
 Paths are relative to process.cwd() as first priority. If nothing is found there, all modules will be tested as relative to this path to try to find a matching file. The modules are searched in the order given in package.json dependencies.
 
+#### CommonJS
+
 ```javascript
 const LUtils = require('larvitutils'),
       Lfs    = require('larvitfs'),
@@ -28,6 +30,13 @@ const LUtils = require('larvitutils'),
         'log':          new (new LUtils()).Log(), // OPTIONAL
         'fs':           require('fs')             // OPTIONAL
       });
+```
+
+#### ES6 modules
+
+```javascript
+import Lfs from 'larvitfs';
+const lfs = new Lfs({}); // And of course with all the options as above
 ```
 
 ### getPathSync()
