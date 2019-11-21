@@ -38,6 +38,6 @@
     "test_environment": "file:test/test_environment/1"
   },
   "dependencies": {
-    "larvitutils": "^2.1.0"
+    "larvitutils": "^4.0.0"
   }
 }
